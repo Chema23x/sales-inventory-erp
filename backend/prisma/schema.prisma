@@ -1,0 +1,67 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. Modelo de Usuarios (Administradores del Negocio)
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 2. Modelo de Clientes
+model Client {
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  phone         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subscriptions Subscription[] // Relación: Un cliente puede tener muchas suscripciones
+}
+
+// 3. Modelo de Suscripciones / Servicios contratados
+model Subscription {
+  id        String             @id @default(uuid())
+  name      String             // Ej. "Plan Mensual Estándar"
+  price     Decimal            @db.Decimal(10, 2)
+  status    SubscriptionStatus @default(ACTIVE)
+  clientId  String
+  client    Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  payments  Payment[]          // Relación: Una suscripción genera muchos pagos
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+// 4. Historial de Pagos / Facturación
+model Payment {
+  id             String         @id @default(uuid())
+  amount         Decimal        @db.Decimal(10, 2)
+  status         PaymentStatus  @default(PENDING)
+  subscriptionId String
+  subscription   Subscription   @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  dueDate        DateTime       // Fecha límite de pago
+  paidAt         DateTime?      // Fecha en la que se pagó realmente
+  createdAt      DateTime       @default(now())
+}
+
+// Enums para forzar consistencia de estados en la Base de Datos
+enum SubscriptionStatus {
+  ACTIVE
+  PAUSED
+  CANCELED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
