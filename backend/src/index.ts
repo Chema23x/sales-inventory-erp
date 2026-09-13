@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import authRoutes from './authRoutes';
+import authRoutes from './routes/authRoutes';
+import clientRoutes from './routes/clientRoutes';
+import billingRoutes from './routes/billingRoutes';
 
 dotenv.config();
 
@@ -14,6 +16,8 @@ app.use(express.json());
 
 // Rutas de la API
 app.use('/api/auth', authRoutes);
+app.use('/api/clients', clientRoutes);
+app.use('/api/billing', billingRoutes);
 
 // Ruta de prueba
 app.get('/api/health', (req, res) => {
