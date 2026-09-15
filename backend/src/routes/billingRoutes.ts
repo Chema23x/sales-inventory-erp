@@ -1,15 +1,26 @@
+// backend/src/routes/billingRoutes.ts
 import { Router } from 'express';
-import { createSubscription, getSubscriptions, createPayment, getPaymentHistory } from '../controllers/billingController';
+import { 
+  getBillingSummary, 
+  createSubscription, 
+  getSubscriptions, 
+  getPaymentHistory 
+} from '../controllers/billingController';
 import { authenticateToken } from '../middlewares/authMiddleware';
 
 const router = Router();
 
-// Forzar seguridad JWT en todos los endpoints de este archivo
+// Todas las rutas financieras requieren autenticación JWT estricta
 router.use(authenticateToken);
 
-router.post('/subscriptions', createSubscription);
+// GET /api/billing/summary -> Obtener MRR, facturación total e historial reciente
+router.get('/summary', getBillingSummary);
+
+// POST /api/billing/subscribe -> Activar plan a un cliente (Transacción atómica)
+router.post('/subscribe', createSubscription);
+
+// Rutas de respaldo / auditoría si se requieren en el futuro
 router.get('/subscriptions', getSubscriptions);
-router.post('/payments', createPayment);
 router.get('/payments', getPaymentHistory);
 
 export default router;
