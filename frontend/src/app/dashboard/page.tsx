@@ -1,12 +1,39 @@
+// src/app/dashboard/page.tsx
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
+import { productService } from '@/services/productService'; 
+import { LowStockAlert } from '@/types/inventory'; 
 
 export default function DashboardPage() {
-  const { user, logoutGlobal, loading } = useAuth();
+  const { user, logoutGlobal, loading: authLoading } = useAuth();
+  
+  // Estados para el módulo de inventario y alertas
+  const [lowStockAlerts, setLowStockAlerts] = useState<LowStockAlert[]>([]);
+  const [loadingAlerts, setLoadingAlerts] = useState<boolean>(true);
 
-  if (loading) {
+  // Cargar las alertas desde el endpoint del Backend
+  useEffect(() => {
+    async function loadAlerts() {
+      try {
+        setLoadingAlerts(true);
+        const alerts = await productService.getLowStockAlerts();
+        setLowStockAlerts(alerts);
+      } catch (error) {
+        console.error('Error al cargar alertas de inventario:', error);
+      } finally {
+        setLoadingAlerts(false);
+      }
+    }
+    
+    if (user) {
+      loadAlerts();
+    }
+  }, [user]);
+
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-zinc-400 text-sm">
         <p className="animate-pulse">Cargando panel de control...</p>
@@ -15,7 +42,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white flex flex-col p-6 max-w-7xl w-full mx-auto space-y-8">
+    <div className="min-h-screen bg-zinc-950 text-white flex flex-col p-6 max-w-7xl w-full mx-auto space-y-8 animate-in fade-in duration-300">
       
       {/* Barra de Perfil / Control Superior */}
       <header className="flex items-center justify-between border-b border-zinc-900 pb-5">
@@ -46,13 +73,13 @@ export default function DashboardPage() {
           <div className="relative z-10">
             <h2 className="text-xl font-bold text-white">¡Bienvenido de vuelta, {user?.name}! 👋</h2>
             <p className="text-sm text-zinc-400 mt-1 max-w-2xl">
-              Tu entorno Fullstack está completamente conectado. Desde este panel podrás gestionar tus clientes, suscripciones fijas e historial de facturación sincronizado en tiempo real con tu base de datos PostgreSQL.
+              Tu entorno Fullstack está completamente conectado. Desde este panel podrás gestionar tus clientes, controlar el catálogo de almacén y monitorear la facturación sincronizada en tiempo real.
             </p>
           </div>
           <div className="absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-emerald-500/5 blur-3xl" />
         </div>
 
-        {/* REJILLA DE ACCESOS DIRECTOS (NUEVA SECCIÓN) */}
+        {/* Rejilla de Accesos Directos */}
         <div>
           <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4">Módulos Disponibles</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -72,19 +99,57 @@ export default function DashboardPage() {
             </Link>
 
             <Link 
-              href="/dashboard/billing" 
+              href="/dashboard/inventory" 
               className="flex items-start gap-4 p-5 rounded-2xl border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/60 hover:border-zinc-700 transition-all group"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover:text-white group-hover:border-zinc-700 transition-colors">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5h16.5c.621 0 1.125.504 1.125 1.125v12.75c0 .621-.504 1.125-1.125 1.125H3.75M3.75 4.5a1.125 1.125 0 00-1.125 1.125V18.75m1.125-14.25v14.25m6-10.5h6m-6 3h6m-6 3h1.5m11.25-3h.008v.008H21V12zm0 3h.008v.008H21v-.008z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                 </svg>
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-white group-hover:text-emerald-400 transition-colors">Módulo Financiero</h4>
-                <p className="mt-1 text-xs text-zinc-400">Analiza el MRR (Ingreso Mensual Recurrente), ingresos acumulados e inspecciona transacciones recientes.</p>
+                <h4 className="text-sm font-semibold text-white group-hover:text-emerald-400 transition-colors">Control de Almacén</h4>
+                <p className="mt-1 text-xs text-zinc-400">Supervisa existencias en tiempo real, actualiza SKUs, precios y gestiona umbrales mínimos de stock.</p>
               </div>
             </Link>
+          </div>
+        </div>
+
+        {/* NUEVA SECCIÓN: LISTADO RÁPIDO DE ALERTAS DE STOCK BAJO */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Alertas Criticas de Reabastecimiento</h3>
+            {!loadingAlerts && lowStockAlerts.length > 0 && (
+              <span className="inline-flex items-center rounded-md bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-400 ring-1 ring-inset ring-amber-500/20 animate-pulse">
+                {lowStockAlerts.length} productos en riesgo
+              </span>
+            )}
+          </div>
+
+          <div className="bg-zinc-900/30 border border-zinc-800 rounded-2xl p-4 overflow-hidden">
+            {loadingAlerts ? (
+              <div className="py-6 text-center text-xs text-zinc-500 animate-pulse">Analizando niveles de inventario...</div>
+            ) : lowStockAlerts.length === 0 ? (
+              <div className="py-6 text-center text-xs text-zinc-500 flex items-center justify-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                Todo en orden. Todos los artículos del almacén cuentan con niveles óptimos.
+              </div>
+            ) : (
+              <div className="divide-y divide-zinc-800/50">
+                {lowStockAlerts.map((alert) => (
+                  <div key={alert.id} className="flex items-center justify-between py-3 first:pt-1 last:pb-1">
+                    <div>
+                      <p className="text-sm font-medium text-zinc-200">{alert.name}</p>
+                      <p className="text-xs text-zinc-500 font-mono tracking-tight mt-0.5">SKU: {alert.sku}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-amber-400">{alert.stock} <span className="text-xs font-normal text-zinc-500">en existencia</span></p>
+                      <p className="text-[10px] text-zinc-500 mt-0.5">Mínimo requerido: {alert.minStock} uds</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -108,6 +173,7 @@ export default function DashboardPage() {
             </div>
           </dl>
         </div>
+
       </main>
     </div>
   );

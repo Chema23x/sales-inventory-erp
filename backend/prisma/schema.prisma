@@ -53,6 +53,25 @@ model Payment {
   createdAt      DateTime       @default(now())
 }
 
+// 5. Modelo de Inventario / Catálogo de Productos
+model Product {
+  id          String   @id @default(uuid())
+  sku         String   @unique // Código único de barras o referencia (ej. "PROD-1001")
+  name        String   // Nombre del producto
+  description String?  // Descripción opcional del artículo
+  
+  // Costos y Precios con precisión decimal estricta
+  purchasePrice Decimal @db.Decimal(10, 2) // Precio al que se compra al proveedor
+  salePrice     Decimal @db.Decimal(10, 2) // Precio al que se vende al cliente final
+  
+  // Control de Existencias
+  stock        Int      @default(0)  // Cantidad física actual en el almacén
+  minStock     Int      @default(5)  // Umbral mínimo permitido antes de activar alerta de escasez
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 // Enums para forzar consistencia de estados en la Base de Datos
 enum SubscriptionStatus {
   ACTIVE
