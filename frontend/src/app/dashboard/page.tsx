@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
 import { productService } from '@/services/productService'; 
+import { analyticsService, DashboardAnalytics } from '@/services/analyticsService';
 import { LowStockAlert } from '@/types/inventory'; 
 
 export default function DashboardPage() {
@@ -13,8 +14,10 @@ export default function DashboardPage() {
   // Estados para el módulo de inventario y alertas
   const [lowStockAlerts, setLowStockAlerts] = useState<LowStockAlert[]>([]);
   const [loadingAlerts, setLoadingAlerts] = useState<boolean>(true);
+  const [analytics, setAnalytics] = useState<DashboardAnalytics | null>(null);
+  const [loadingAnalytics, setLoadingAnalytics] = useState<boolean>(true);
 
-  // Cargar las alertas desde el endpoint del Backend
+  // 1. Cargar las alertas desde el endpoint del Backend
   useEffect(() => {
     async function loadAlerts() {
       try {
@@ -27,10 +30,23 @@ export default function DashboardPage() {
         setLoadingAlerts(false);
       }
     }
-    
-    if (user) {
-      loadAlerts();
+    if (user) loadAlerts();
+  }, [user]);
+
+  // 2. Cargar Métricas Consolidadas Reales del Servidor
+  useEffect(() => {
+    async function loadAnalytics() {
+      try {
+        setLoadingAnalytics(true);
+        const data = await analyticsService.getDashboardAnalytics();
+        setAnalytics(data);
+      } catch (error) {
+        console.error('Error al cargar métricas globales:', error);
+      } finally {
+        setLoadingAnalytics(false);
+      }
     }
+    if (user) loadAnalytics();
   }, [user]);
 
   if (authLoading) {
@@ -115,10 +131,10 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* NUEVA SECCIÓN: LISTADO RÁPIDO DE ALERTAS DE STOCK BAJO */}
+               {/* NUEVA SECCIÓN: LISTADO RÁPIDO DE ALERTAS DE STOCK BAJO */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Alertas Criticas de Reabastecimiento</h3>
+            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Alertas Críticas de Reabastecimiento</h3>
             {!loadingAlerts && lowStockAlerts.length > 0 && (
               <span className="inline-flex items-center rounded-md bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-400 ring-1 ring-inset ring-amber-500/20 animate-pulse">
                 {lowStockAlerts.length} productos en riesgo
@@ -144,7 +160,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-bold text-amber-400">{alert.stock} <span className="text-xs font-normal text-zinc-500">en existencia</span></p>
-                      <p className="text-[10px] text-zinc-500 mt-0.5">Mínimo requerido: {alert.minStock} uds</p>
+                      <p className="text-[10px] text-zinc-500 mt-0.5">Mínimo: {alert.minStock} uds</p>
                     </div>
                   </div>
                 ))}
@@ -153,25 +169,50 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Rejilla de Métricas Semántica */}
+        {/* Rejilla de Métricas Semántica Vivas (DL Conectado con la API) */}
         <div>
           <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4">Métricas Globales</h3>
           <dl className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5">
-              <dt className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Clientes Activos</dt>
-              <dd className="text-2xl font-bold text-white mt-1">--</dd>
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5 shadow-sm">
+              <dt className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Clientes Registrados</dt>
+              <dd className="text-2xl font-bold text-white mt-1">
+                {loadingAnalytics ? <span className="text-zinc-600 animate-pulse">...</span> : analytics?.totalClients || 0}
+              </dd>
             </div>
             
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5">
-              <dt className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Ingresos Mensuales (MRR)</dt>
-              <dd className="text-2xl font-bold text-emerald-400 mt-1">$0.00 MXN</dd>
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5 shadow-sm">
+              <dt className="text-xs font-medium text-zinc-400 uppercase tracking-wider">MRR (Suscripciones Activas)</dt>
+              <dd className="text-2xl font-bold text-emerald-400 mt-1">
+                {loadingAnalytics ? (
+                  <span className="text-zinc-600 animate-pulse">...</span>
+                ) : (
+                  `$${(analytics?.monthlyRecurringRevenue || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN`
+                )}
+              </dd>
             </div>
             
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5">
-              <dt className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Cobros Pendientes</dt>
-              <dd className="text-2xl font-bold text-white mt-1">--</dd>
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-5 shadow-sm">
+              <dt className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Facturación Pendiente</dt>
+              <dd className={`text-2xl font-bold mt-1 ${analytics?.pendingPaymentsCount && analytics.pendingPaymentsCount > 0 ? 'text-amber-400' : 'text-white'}`}>
+                {loadingAnalytics ? <span className="text-zinc-600 animate-pulse">...</span> : `${analytics?.pendingPaymentsCount || 0} recibos`}
+              </dd>
             </div>
           </dl>
+          
+          {/* Tarjeta de Ingresos Globales Consolidados */}
+          <div className="mt-5 bg-zinc-900/30 border border-zinc-800 rounded-xl p-5 flex items-center justify-between select-none">
+            <div>
+              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider block">Ingresos Globales Consolidados</span>
+              <span className="text-xs text-zinc-500 block mt-0.5">Sumatoria de caja POS + pagos históricos de suscripciones.</span>
+            </div>
+            <span className="text-2xl font-black text-white">
+              {loadingAnalytics ? (
+                <span className="text-zinc-600 animate-pulse">...</span>
+              ) : (
+                `$${(analytics?.consolidatedTotalRevenue || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`
+              )}
+            </span>
+          </div>
         </div>
 
       </main>

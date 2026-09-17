@@ -6,6 +6,7 @@ import clientRoutes from './routes/clientRoutes';
 import billingRoutes from './routes/billingRoutes';
 import productRoutes from './routes/productRoutes';
 import saleRoutes from './routes/saleRoutes';
+import analyticsRoutes from './routes/analyticsRoutes';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use('/api/clients', clientRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/sales', saleRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Ruta de prueba
 app.get('/api/health', (req, res) => {
