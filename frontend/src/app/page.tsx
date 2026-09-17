@@ -53,7 +53,7 @@ export default function HomePage() {
               Acceder al Panel de Control
             </Link>
             <a
-              href="https://github.com"
+              href="https://github.com/Chema23x/sales-inventory-erp"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto bg-zinc-900/50 hover:bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white px-6 py-3.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] text-center"

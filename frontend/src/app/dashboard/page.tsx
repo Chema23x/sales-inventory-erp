@@ -200,7 +200,7 @@ export default function DashboardPage() {
           </dl>
           
           {/* Tarjeta de Ingresos Globales Consolidados */}
-          <div className="mt-5 bg-zinc-900/30 border border-zinc-800 rounded-xl p-5 flex items-center justify-between select-none">
+          <div className="my-5 bg-zinc-900/30 border border-zinc-800 rounded-xl p-5 flex items-center justify-between select-none">
             <div>
               <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider block">Ingresos Globales Consolidados</span>
               <span className="text-xs text-zinc-500 block mt-0.5">Sumatoria de caja POS + pagos históricos de suscripciones.</span>
