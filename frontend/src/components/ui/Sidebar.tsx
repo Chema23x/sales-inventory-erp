@@ -46,6 +46,18 @@ export default function Sidebar() {
       ),
     },
     // ==========================================
+    // NUEVO ENLACE: INTEGRACIÓN DE VENTAS / POS
+    // ==========================================
+    {
+      name: 'Ventas (POS)',
+      href: '/dashboard/sales',
+      icon: (
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-3-12v.75m0 3v.75m0 3v.75m0 3V18M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12h1.5m-7.5 0h1.5m-7.5 0h1.5M3 12V5.25A2.25 2.25 0 0 1 5.25 3h13.5A2.25 2.25 0 0 1 21 5.25V12M3 12h18" />
+        </svg>
+      ),
+    },
+    // ==========================================
     // NUEVO ENLACE: INTEGRACIÓN MÓDULO FINANCIERO
     // ==========================================
     {

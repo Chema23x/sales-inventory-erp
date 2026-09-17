@@ -26,6 +26,7 @@ model Client {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   subscriptions Subscription[] // Relación: Un cliente puede tener muchas suscripciones
+  sales         Sale[]
 }
 
 // 3. Modelo de Suscripciones / Servicios contratados
@@ -70,6 +71,38 @@ model Product {
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  saleItems     SaleItem[]
+}
+
+// 6. Modelo Maestro de Ventas / Tickets Comerciales
+model Sale {
+  id          String     @id @default(uuid())
+  total       Decimal    @db.Decimal(10, 2) // Sumatoria total de la venta
+  
+  // Relación opcional: Una venta puede ser a un cliente registrado o al público en general
+  clientId    String?
+  client      Client?    @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  
+  // Relación: Una venta contiene múltiples artículos detallados
+  items       SaleItem[]
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// 7. Modelo de Detalle de Venta (Productos específicos y cantidades)
+model SaleItem {
+  id          String   @id @default(uuid())
+  quantity    Int      // Cantidad de unidades vendidas
+  unitPrice   Decimal  @db.Decimal(10, 2) // Precio unitario al momento de la venta
+  subtotal    Decimal  @db.Decimal(10, 2) // quantity * unitPrice
+  
+  // Relaciones requeridas
+  saleId      String
+  sale        Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
 }
 
 // Enums para forzar consistencia de estados en la Base de Datos
