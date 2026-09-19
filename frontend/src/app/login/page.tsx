@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { apiFetch } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { Suspense } from 'react'; 
+import RegisterAlert from './RegisterAlert'; 
 
 export default function LoginPage() {
   const { loginGlobal } = useAuth();
@@ -47,6 +49,10 @@ const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
           <h1 className="text-2xl font-bold text-white tracking-tight">SmartStock ERP</h1>
           <p className="text-sm text-zinc-400 mt-1">Ingresa tus credenciales de administrador</p>
         </div>
+
+        <Suspense fallback={<div className="h-10 animate-pulse bg-zinc-900 rounded-xl mb-4" />}>
+          <RegisterAlert />
+        </Suspense>
 
         {/* Alerta de Error */}
         {error && (

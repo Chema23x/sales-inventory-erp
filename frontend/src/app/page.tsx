@@ -12,13 +12,20 @@ export default function HomePage() {
             <span className="h-3 w-3 rounded-full bg-emerald-500 shadow-[0_0_12px_#10b981]" />
             <span className="text-lg font-bold tracking-tight text-white">SmartStock <span className="text-zinc-500 font-medium text-xs bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">ERP</span></span>
           </div>
-          
-          <Link
-            href="/login"
-            className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 hover:text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all active:scale-[0.98]"
-          >
-            Iniciar Sesión
-          </Link>
+         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/register" // <-- Cambiado de /login a /register
+              className="w-full sm:w-auto bg-white hover:bg-zinc-200 text-black font-bold px-8 py-3.5 rounded-xl text-sm transition-all active:scale-[0.98] text-center shadow-lg shadow-white/5"
+            >
+              Registrarse Gratis
+            </Link>
+            <Link
+              href="/login"
+              className="w-full sm:w-auto bg-zinc-900/50 hover:bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white px-8 py-3.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] text-center"
+            >
+              Iniciar Sesión
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -31,7 +38,7 @@ export default function HomePage() {
         <div className="max-w-3xl text-center space-y-6 relative z-10">
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-3 py-1 text-xs font-medium text-emerald-400 select-none animate-fade-in">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Ecosistema Fullstack Completado • v1.0
+            ERP Ventas • v1.0
           </div>
           
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight">
@@ -42,7 +49,9 @@ export default function HomePage() {
           </h1>
           
           <p className="text-base sm:text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed">
-            Optimiza la administración de tu negocio. Una plataforma integral diseñada con tipado estricto, persistencia en Postgres y procesamiento transaccional atómico.
+            Optimiza la administración de tu negocio. 
+            <br/> 
+            Una plataforma integral diseñada para llevar los registros de tu negocio de manera satisfactoria
           </p>
 
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -69,7 +78,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
           <p>© {new Date().getFullYear()} SmartStock ERP. Todos los derechos reservados.</p>
           <p className="font-mono text-[10px] bg-zinc-900/50 border border-zinc-900 px-2 py-1 rounded">
-            Environment: Localhost • Node.js + Next.js
+            Environment: • Express + TypeScript • Node.js + Next.js
           </p>
         </div>
       </footer>
