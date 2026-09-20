@@ -111,9 +111,9 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold py-3 text-sm transition tracking-wide active:scale-[0.99] disabled:opacity-50"
+            className="w-full mt-2 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold py-3 text-sm transition tracking-wide active:scale-[0.99] disabled:opacity-50 cursor-pointer "
           >
-            {loading ? 'Creando cuenta...' : 'Crear Cuenta Corporativa'}
+            {loading ? 'Creando cuenta...' : 'Crear Cuenta de Negocio'}
           </button>
         </form>
 

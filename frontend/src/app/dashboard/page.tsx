@@ -74,7 +74,7 @@ export default function DashboardPage() {
           </div>
           <button
             onClick={logoutGlobal}
-            className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white px-3 py-1.5 rounded-xl text-xs font-medium transition active:scale-[0.97]"
+            className="bg-zinc-900 cursor-pointer hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white px-3 py-1.5 rounded-xl text-xs font-medium transition active:scale-[0.97]"
           >
             Cerrar Sesión
           </button>
@@ -89,7 +89,7 @@ export default function DashboardPage() {
           <div className="relative z-10">
             <h2 className="text-xl font-bold text-white">¡Bienvenido de vuelta, {user?.name}! 👋</h2>
             <p className="text-sm text-zinc-400 mt-1 max-w-2xl">
-              Tu entorno Fullstack está completamente conectado. Desde este panel podrás gestionar tus clientes, controlar el catálogo de almacén y monitorear la facturación sincronizada en tiempo real.
+              Desde este panel podrás gestionar tus clientes, controlar el catálogo de almacén y monitorear la facturación sincronizada en tiempo real.
             </p>
           </div>
           <div className="absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-emerald-500/5 blur-3xl" />

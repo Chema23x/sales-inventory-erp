@@ -77,7 +77,7 @@ export default function ClientsPage() {
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-white hover:bg-zinc-200 text-black font-semibold px-4 py-2 rounded-xl text-sm transition active:scale-[0.98]"
+          className="bg-white cursor-pointer hover:bg-zinc-200 text-black font-semibold px-4 py-2 rounded-xl text-sm transition active:scale-[0.98]"
         >
           + Agregar Cliente
         </button>
@@ -118,7 +118,7 @@ export default function ClientsPage() {
                       <td className="p-4 text-right">
                         <button
                           onClick={() => handleOpenSubscription(client.id, client.name)}
-                          className="inline-flex items-center text-xs font-semibold text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-2.5 py-1.5 rounded-lg transition-all"
+                          className="inline-flex cursor-pointer items-center text-xs font-semibold text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-2.5 py-1.5 rounded-lg transition-all"
                         >
                           Gestionar Plan
                         </button>

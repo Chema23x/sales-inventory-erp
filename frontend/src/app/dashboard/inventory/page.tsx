@@ -55,7 +55,7 @@ export default function InventoryPage() {
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-white hover:bg-zinc-200 text-black font-semibold px-4 py-2 rounded-xl text-sm transition active:scale-[0.98] shadow-md shadow-white/5"
+          className="bg-white cursor-pointer hover:bg-zinc-200 text-black font-semibold px-4 py-2 rounded-xl text-sm transition active:scale-[0.98] shadow-md shadow-white/5"
         >
           + Agregar Artículo
         </button>

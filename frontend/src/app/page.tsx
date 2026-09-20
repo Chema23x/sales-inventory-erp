@@ -1,7 +1,16 @@
 // src/app/page.tsx
+'use client';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 export default function HomePage() {
+  const { loading } = useAuth();
+
+  // Si está cargando el estado de la sesión, mostramos un fondo limpio transicional
+  if (loading) {
+    return <div className="min-h-screen bg-zinc-950" />;
+  }
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col justify-between selection:bg-emerald-500/30 selection:text-emerald-400">
       
@@ -12,16 +21,16 @@ export default function HomePage() {
             <span className="h-3 w-3 rounded-full bg-emerald-500 shadow-[0_0_12px_#10b981]" />
             <span className="text-lg font-bold tracking-tight text-white">SmartStock <span className="text-zinc-500 font-medium text-xs bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">ERP</span></span>
           </div>
-         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href="/register" // <-- Cambiado de /login a /register
-              className="w-full sm:w-auto bg-white hover:bg-zinc-200 text-black font-bold px-8 py-3.5 rounded-xl text-sm transition-all active:scale-[0.98] text-center shadow-lg shadow-white/5"
+              href="/register" 
+              className="w-full sm:w-auto bg-white hover:bg-zinc-200 text-black font-bold px-6 py-2 rounded-xl text-sm transition-all active:scale-[0.98] text-center shadow-lg shadow-white/5"
             >
               Registrarse Gratis
             </Link>
             <Link
               href="/login"
-              className="w-full sm:w-auto bg-zinc-900/50 hover:bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white px-8 py-3.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] text-center"
+              className="w-full sm:w-auto bg-zinc-900/50 hover:bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white px-6 py-2 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] text-center"
             >
               Iniciar Sesión
             </Link>
